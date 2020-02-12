@@ -151,52 +151,52 @@ replicate 10 5 == take 10 (repeat 5)
 
 -- %% markdown
 -- ## List comprehension:
--- - `[x*2 | x <- [1..10]]`
+-- - `[ x*2 | x <- [1..10]]`
 -- - ref: in mathematics, $S = \{2 \cdot x | x \in \mathbb{N}, x \leq 10\}$
 
 -- %%
-[x*2 | x <- [1..10]]
+[ x*2 | x <- [1..10]]
 
 -- %% markdown
 -- Filtering with predicate
 -- %%
-[x*2 | x <- [1..10], x*2 >= 12]
-[x | x <- [50..100], x `mod` 7 == 3]
+[ x*2 | x <- [1..10], x*2 >= 12]
+[ x | x <- [50..100], x `mod` 7 == 3]
 
-boomBangs xs = [if x < 10 then "BOOM!" else "BANG!" | x <- xs, odd x]
+boomBangs xs = [ if x < 10 then "BOOM!" else "BANG!" | x <- xs, odd x]
 boomBangs [7..13]
 
 -- %% markdown
 -- Multiple predicates
 -- %%
-[x | x <- [10..20], x /= 13, x /= 15, x /= 19]
+[ x | x <- [10..20], x /= 13, x /= 15, x /= 19]
 
 -- %% markdown
 -- Multiple inputs
 -- %%
-[x*y | x <- [1,10,100], y <- [1,10,100]]
-[x*y | x <- [1,10,100], y <- [1,10,100], x*y > 100]
+[ x*y | x <- [1,10,100], y <- [1,10,100]]
+[ x*y | x <- [1,10,100], y <- [1,10,100], x*y > 100]
 
 -- %%
 let nouns = ["hobo", "frog", "pope"]
 let adjectives = ["lazy", "grouchy", "scheming"]
-[adjective ++ " " ++ noun | adjective <- adjectives, noun <- nouns]
+[ adjective ++ " " ++ noun | adjective <- adjectives, noun <- nouns]
 
-length' xs = sum [1 | _ <- xs]
+length' xs = sum [ 1 | _ <- xs]
 length' [1..10]
 
 -- %% markdown
 -- `String`s as lists
 -- %%
 length' "out of box !"
-removeNonUppercase str = [c | c <- str, c `elem` ['A'..'Z']]
+removeNonUppercase str = [ c | c <- str, c `elem` ['A'..'Z']]
 removeNonUppercase "Shuhei Kadowaki"
 
 -- %% markdown
 -- List of lists
 -- %%
 let xxs = [[1..10], [11..20], [22..30]]
-[[x | x <- xs, even x] | xs <- xxs]
+[ [ x | x <- xs, even x] | xs <- xxs]
 
 
 -- %% markdown
