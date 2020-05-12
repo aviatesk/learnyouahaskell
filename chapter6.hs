@@ -12,14 +12,14 @@
 -- - return functions as return value
 --
 -- > Higher order functions aren't just a part of the Haskell experience, they pretty much are _the Haskell experience_.
--- > It turns out that if you want to defined computations by defining what stuff _is_ instead of defining steps that change some state and maybe looping them, higher order functions are indispensable.
+-- > It turns out that if you want to define computations by defining what stuff _is_ instead of defining steps that change some state and maybe looping them, higher order functions are indispensable.
 -- > They're a really powerful way of solving problems and thinking about programs.
 
 
 -- %% markdown
 -- ## Curried Functions
 --
--- ... Every function in Haskell officially only takes one parameter; so how is it possible that we defined an used several function that take more than one parameter so far ?
+-- ... Every function in Haskell officially only takes one parameter; so how is it possible that we defined and used several function that take more than one parameter so far ?
 --
 -- The clever trick: all the functions that accepted _several parameters_ so far have been **Curried Functions**
 --
@@ -33,6 +33,7 @@
 max 4 5
 (max 4) 5
 :t max
+:t max 4
 
 -- %% markdown
 -- The space is sort of like an operator (function application) and it has the highest precedence; `max :: (Ord a) => a -> a -> a` can be written as `max :: (Ord a) => a -> (a -> a)`:
@@ -237,11 +238,11 @@ quicksort "Shuhei Kadowaki"
 -- > Thanks to Haskell's laziness, even if you map something over a list several times and filter it several times, it will only pass over the list once.
 
 -- %% markdown
--- **find the largest number under 100,000 that7s divisible by 3829**
+-- **find the largest number under 100,000 that's divisible by 3829**
 
 -- %%
 largestDivisible :: (Integral a) => a
-largestDivisible = head (filter p [100000,99999..]) -- this can be inifinite list; the computation stops anyways
+largestDivisible = head (filter p [100000,99999..]) -- this can be infinite list; the computation stops anyways
   where p x = x `mod` 3829 == 0
 
 -- %% markdown
@@ -293,3 +294,208 @@ let listOfFuns = map (*) [0..] in (listOfFuns !! 5) 2
 
 -- %% markdown
 -- ## Lambdas
+--
+-- Lambdas: anonymous functions that are used because we need some functions only once; normally passed into a higher-order function
+
+-- %%
+-- syntax: `(\args -> body)`
+zipWith (\a b -> (a * 30 + 3) / b) [5,4..1] [1..5]
+
+-- caveat: don't abuse lambdas; using partial functions can lead to more readable code
+map (+1) [0..9]
+map (\x -> x + 1) [0..9]
+
+-- pattern match: cant defined fall back definition !
+map (\(a,b) -> a + b) [(1,2),(3,5),(6,3),(2,6)]
+
+-- -- without parentheses, they extend all the way to the right
+addThree :: (Num a) => a -> a -> a -> a
+addThree x y z = x + y + z
+
+-- addThree :: (Num a) => a -> a -> a -> a
+-- addThree = \x -> \y -> \z -> x + y + z
+
+-- more "sensible" `flip'` definition: it would be clearer that `flip'` is used for producing a new function most of the time
+flip' :: (a -> b -> c) -> b -> a -> c
+flip' f = \x y -> f y x
+
+flip' (++) "kadowaki" "shuhei"
+
+
+-- %% markdown
+-- ## `fold`s
+--
+-- `fold` encapsulate the common pattern of the recursive functions on lists:
+-- - have an edge case for the empty list
+-- - introduce `x:xs` pattern and then do some action that involves a signle element and the rest of the list
+--
+-- > Folds can be used to implement any function where you traverse a list once, element by element, and then return something based on that. Whenever you want to traverse a list to return something, chances are you want a `fold`.
+
+-- %% markdown
+-- `foldl f acc xs`
+-- - `f acc x`: binary function: produces a new accumulator from the current accumulator `acc` and the current list head `x`
+-- - `acc`: a starting value, a.k.a. accumulator
+-- - `list`: list to fold up
+
+-- %%
+sum' :: (Num a) => [a] -> a
+sum' xs = foldl (\acc x -> acc + x) 0 xs
+
+sum' [1..10]
+
+-- %%
+-- even more succinctly
+sum' :: (Num a) => [a] -> a
+sum' = foldl (+) 0 -- carrying !
+
+sum' [1..10]
+
+-- %%
+elem' :: (Eq a) => a -> [a] -> Bool
+elem' y ys = foldl (\acc x -> if x == y then True else acc) False ys
+
+elem' 1 [0..10]
+-- elem' 1 [0..] -- TODO
+
+-- %% markdown
+-- `foldr f acc xs`
+-- - `f x acc`: binary function: produces a new accumulator from the current accumulator `acc` and the current list head `x`
+-- - `acc`: a starting value, a.k.a. accumulator
+-- - `list`: list to fold up
+
+-- %%
+map' :: (a -> b) -> [a] -> [b]
+map' f xs = foldr (\x acc -> f x : acc) [] xs
+-- map' f xs = foldl (\acc x -> acc ++ [f x]) [] xs -- NOTE: `++` is much more expensive than `:`
+
+map' (+1) [0..9]
+
+-- %% markdown
+-- big difference:
+-- - `foldr` can work on infinite lists, i.e. take an infinite list _at some point_ should work with `foldr`
+-- - `foldl` can't on infinite lists
+
+-- %% markdown
+-- `foldl1`, `foldr1`:
+-- - don't require an explicit starting value
+-- - can be used when a function doesn't make sense given an empty list
+
+-- %%
+maximum' :: (Ord a) => [a] -> a
+maximum' = foldr1 (\x acc -> if x > acc then x else acc)
+
+reverse' :: [a] -> [a]
+reverse' = foldl (\acc x -> x : acc) [] -- or `foldl (flip (:)) []`
+
+product' :: (Num a) => [a] -> a
+product' = foldr1 (*)
+
+filter' :: (a -> Bool) -> [a] -> [a]
+filter' p = foldr (\x acc -> if p x then x : acc else acc) []
+
+head' :: [a] -> a
+head' = foldr1 (\x _ -> x)
+
+last' :: [a] -> a
+last' = foldr1 (\_ x -> x)
+
+-- %% markdown
+-- `scanl`, `scanr`, `scanl1`, `scanr1`: report all the intermediate accumulator states in the form of a list
+
+-- %%
+scanl (+) 0 [1..10]
+scanr (+) 0 [1..10]
+scanl1 (\acc x -> if x > acc then x else acc) [3,4,5,3,7,9,2,1]
+scanl (flip (:)) [] [3,2..1]
+
+-- %% markdown
+-- **How many elements does it take for the sum of the roots of all natural numbers to exceed 1000 ?**
+
+-- %%
+sqrtSum = length (takeWhile (<1000) (scanl1 (+) (map sqrt [1..])))
+sum (map sqrt [1..130])
+sum (map sqrt [1..131])
+
+
+-- %% markdown
+-- ## Function application with `$`
+--
+-- ```haskell
+-- ($) :: (a -> b) -> a -> b
+-- f $ x = f x
+-- ```
+-- - normal function application (putting a space between two things): high precedence, left-associative
+-- - `$` function: lowest precedence, right-associative
+--
+-- So, how this seemingly useless operator can be useful ?:
+-- - we don't have to write so many parentheses !
+--   * `sum (map sqrt [1..130])` ⟺ `sum $ map sqrt [1..130]`
+--   * `sqrt (3 + 4 + 9)` ⟺ `sqrt $ 3 + 4 + 9`
+--   * `sum (filter (>10) (map (*2) [2..10]))` ⟺ `sum $ filter (>10) $ map (*2) [2..10]`
+-- - the function application can be treated just like another function
+--   * e.g. map function application _over a list of functions_: `map ($ 3) [(4+), (10*), (^2), sqrt]`
+
+-- %%
+sum $ filter (>10) $ map (*2) [2..10]
+map ($ 3) [(4+), (10*), (^2), sqrt]
+
+
+-- %% markdown
+-- ## Function composition
+--
+-- $(f \circ g)(x) = f(g(x))$:
+-- ```haskell
+-- (.) :: (b -> c) -> (a -> b) -> a -> c
+-- f . g = \x -> f (g x)
+-- ```
+--
+-- NOTE: function composition can make functions on the fly as lambdas do, but many times, is clearer and more concise
+
+-- %%
+map (\x -> negate (abs x)) [5,-3,-6,7,-3,2,-19,24]
+map (negate . abs) [5,-3,-6,7,-3,2,-19,24]
+
+-- %% markdown
+-- Function composition is right-associative
+
+-- %%
+map (\xs -> negate (sum (tail xs))) [[1..5], [3..6], [1..7]]
+map (negate . sum . tail) [[1..5], [3..6], [1..7]]
+
+-- %% markdown
+-- When functions take several parameters:
+-- - we usually have to partially apply them just so much that each function takes just one parameter
+--   * the expressions below are all equivalent:
+--     + `sum (replicate 5 (max 6.7 8.9))`
+--     + `(sum . replicate 5 . max 6.7) 8.9`
+--     + `sum . replicate 5 . max 6.7 $ 8.9`
+
+-- %%
+replicate 3 (product (map (*3) (zipWith max [1..5] [6..10])))
+replicate 3 . product . map (*3) . zipWith max [1..5] $ [6..10]
+
+-- %% markdown
+-- "point free style" (or "pointless style") function definition:
+-- ```haskell
+-- sum' :: (Num a) => [a] -> a
+-- sum' - foldr (+) 0 -- no `xs` on both side
+-- ```
+--
+-- ```haskell
+-- fn x = ceiling (negate (tan (cos (max 50 x))))
+-- ```
+-- can be defined
+-- ```haskell
+-- fn = ceiling . negate . tan . cos . max 50
+-- ```
+--
+-- caveat: a huge composition chain can be less readable, which compositing a long chain can be happy for programmers ...
+-- - `oddSquareSum = sum (takeWhile (<10000) (filter odd (map (^2) [1..])))`: agh ...
+-- - `oddSquareSum = sum . takeWhile (<10000) . filter odd . map (^2) $ [1..]`: another agh ...
+-- - ⟹ use `let` (when there's a chance of someone else reading this)
+
+-- %%
+oddSquareSum =
+  let oddSquares = filter odd $ map (^2) [1..]
+      belowLimit = takeWhile (<10000) oddSquares
+  in sum belowLimit
