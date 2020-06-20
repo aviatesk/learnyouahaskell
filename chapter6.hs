@@ -244,6 +244,7 @@ quicksort "Shuhei Kadowaki"
 largestDivisible :: (Integral a) => a
 largestDivisible = head (filter p [100000,99999..]) -- this can be infinite list; the computation stops anyways
   where p x = x `mod` 3829 == 0
+largestDivisible
 
 -- %% markdown
 -- **find the sum of all odd squares that are smaller than 10,000**
@@ -335,7 +336,7 @@ flip' (++) "kadowaki" "shuhei"
 -- `foldl f acc xs`
 -- - `f acc x`: binary function: produces a new accumulator from the current accumulator `acc` and the current list head `x`
 -- - `acc`: a starting value, a.k.a. accumulator
--- - `list`: list to fold up
+-- - `xs`: list to fold up
 
 -- %%
 sum' :: (Num a) => [a] -> a
@@ -361,7 +362,7 @@ elem' 1 [0..10]
 -- `foldr f acc xs`
 -- - `f x acc`: binary function: produces a new accumulator from the current accumulator `acc` and the current list head `x`
 -- - `acc`: a starting value, a.k.a. accumulator
--- - `list`: list to fold up
+-- - `xs`: list to fold up
 
 -- %%
 map' :: (a -> b) -> [a] -> [b]
@@ -406,16 +407,16 @@ last' = foldr1 (\_ x -> x)
 scanl (+) 0 [1..10]
 scanr (+) 0 [1..10]
 scanl1 (\acc x -> if x > acc then x else acc) [3,4,5,3,7,9,2,1]
-scanl (flip (:)) [] [3,2..1]
+scanl (flip (:)) [] [3,2,1]
 
 -- %% markdown
 -- **How many elements does it take for the sum of the roots of all natural numbers to exceed 1000 ?**
 
 -- %%
 sqrtSum = length (takeWhile (<1000) (scanl1 (+) (map sqrt [1..])))
+sqrtSum
 sum (map sqrt [1..130])
 sum (map sqrt [1..131])
-
 
 -- %% markdown
 -- ## Function application with `$`
@@ -424,9 +425,8 @@ sum (map sqrt [1..131])
 -- ($) :: (a -> b) -> a -> b
 -- f $ x = f x
 -- ```
--- - normal function application (putting a space between two things): high precedence, left-associative
+-- - normal function application (putting a space between two things): high precedence, left-associative (i.e. `f a b c` is `(((f a) b) c)`)
 -- - `$` function: lowest precedence, right-associative
---
 -- So, how this seemingly useless operator can be useful ?:
 -- - we don't have to write so many parentheses !
 --   * `sum (map sqrt [1..130])` ⟺ `sum $ map sqrt [1..130]`
@@ -452,7 +452,7 @@ map ($ 3) [(4+), (10*), (^2), sqrt]
 -- NOTE: function composition can make functions on the fly as lambdas do, but many times, is clearer and more concise
 
 -- %%
-map (\x -> negate (abs x)) [5,-3,-6,7,-3,2,-19,24]
+map (\x -> negate (abs x))
 map (negate . abs) [5,-3,-6,7,-3,2,-19,24]
 
 -- %% markdown
@@ -465,10 +465,14 @@ map (negate . sum . tail) [[1..5], [3..6], [1..7]]
 -- %% markdown
 -- When functions take several parameters:
 -- - we usually have to partially apply them just so much that each function takes just one parameter
---   * the expressions below are all equivalent:
---     + `sum (replicate 5 (max 6.7 8.9))`
---     + `(sum . replicate 5 . max 6.7) 8.9`
---     + `sum . replicate 5 . max 6.7 $ 8.9`
+-- - so the expressions below are all equivalent:
+--   * `sum (replicate 5 (max 6.7 8.9))`
+--   * `(sum . replicate 5 . max 6.7) 8.9`
+--   * `sum . replicate 5 . max 6.7 $ 8.9`
+--
+-- > If you want to rewrite an expression with a lot of parentheses by using function composition,
+-- > you can start by putting the last parameter of the innermost function after a `$` and then just composing all the other function calls,
+-- > writing them without their last parameter and putting dots between them.
 
 -- %%
 replicate 3 (product (map (*3) (zipWith max [1..5] [6..10])))

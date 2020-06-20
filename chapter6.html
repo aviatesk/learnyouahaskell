@@ -14172,7 +14172,7 @@ font-weight: bold;
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><code>filter</code>:</p>
+<p><code>filter</code></p>
 
 </div>
 </div>
@@ -14363,9 +14363,30 @@ font-weight: bold;
 <div class=" highlight hl-Haskell"><pre><span></span><span class="nf">largestDivisible</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Integral</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span>
 <span class="nf">largestDivisible</span> <span class="ow">=</span> <span class="n">head</span> <span class="p">(</span><span class="n">filter</span> <span class="n">p</span> <span class="p">[</span><span class="mi">100000</span><span class="p">,</span><span class="mi">99999</span><span class="o">..</span><span class="p">])</span> <span class="c1">-- this can be infinite list; the computation stops anyways</span>
   <span class="kr">where</span> <span class="n">p</span> <span class="n">x</span> <span class="ow">=</span> <span class="n">x</span> <span class="p">`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">3829</span> <span class="o">==</span> <span class="mi">0</span>
+<span class="nf">largestDivisible</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>99554</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -14695,7 +14716,7 @@ font-weight: bold;
 <ul>
 <li><code>f acc x</code>: binary function: produces a new accumulator from the current accumulator <code>acc</code> and the current list head <code>x</code></li>
 <li><code>acc</code>: a starting value, a.k.a. accumulator</li>
-<li><code>list</code>: list to fold up</li>
+<li><code>xs</code>: list to fold up</li>
 </ul>
 
 </div>
@@ -14818,7 +14839,7 @@ font-weight: bold;
 <ul>
 <li><code>f x acc</code>: binary function: produces a new accumulator from the current accumulator <code>acc</code> and the current list head <code>x</code></li>
 <li><code>acc</code>: a starting value, a.k.a. accumulator</li>
-<li><code>list</code>: list to fold up</li>
+<li><code>xs</code>: list to fold up</li>
 </ul>
 
 </div>
@@ -14930,7 +14951,7 @@ font-weight: bold;
 <div class=" highlight hl-Haskell"><pre><span></span><span class="nf">scanl</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="mi">0</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">10</span><span class="p">]</span>
 <span class="nf">scanr</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="mi">0</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">10</span><span class="p">]</span>
 <span class="nf">scanl1</span> <span class="p">(</span><span class="nf">\</span><span class="n">acc</span> <span class="n">x</span> <span class="ow">-&gt;</span> <span class="kr">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">acc</span> <span class="kr">then</span> <span class="n">x</span> <span class="kr">else</span> <span class="n">acc</span><span class="p">)</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
-<span class="nf">scanl</span> <span class="p">(</span><span class="n">flip</span> <span class="p">(</span><span class="kt">:</span><span class="p">))</span> <span class="kt">[]</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="o">..</span><span class="mi">1</span><span class="p">]</span>
+<span class="nf">scanl</span> <span class="p">(</span><span class="n">flip</span> <span class="p">(</span><span class="kt">:</span><span class="p">))</span> <span class="kt">[]</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
 </pre></div>
 
     </div>
@@ -15011,6 +15032,7 @@ font-weight: bold;
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-Haskell"><pre><span></span><span class="nf">sqrtSum</span> <span class="ow">=</span> <span class="n">length</span> <span class="p">(</span><span class="n">takeWhile</span> <span class="p">(</span><span class="o">&lt;</span><span class="mi">1000</span><span class="p">)</span> <span class="p">(</span><span class="n">scanl1</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="p">(</span><span class="n">map</span> <span class="n">sqrt</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="p">])))</span>
+<span class="nf">sqrtSum</span>
 <span class="nf">sum</span> <span class="p">(</span><span class="n">map</span> <span class="n">sqrt</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">130</span><span class="p">])</span>
 <span class="nf">sum</span> <span class="p">(</span><span class="n">map</span> <span class="n">sqrt</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">131</span><span class="p">])</span>
 </pre></div>
@@ -15022,6 +15044,19 @@ font-weight: bold;
 <div class="output_wrapper">
 <div class="output">
 
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>130</pre>
+</div>
+
+</div>
 
 <div class="output_area">
 
@@ -15060,11 +15095,9 @@ font-weight: bold;
 <span class="nf">f</span> <span class="o">$</span> <span class="n">x</span> <span class="ow">=</span> <span class="n">f</span> <span class="n">x</span>
 </pre></div>
 <ul>
-<li>normal function application (putting a space between two things): high precedence, left-associative</li>
-<li><code>$</code> function: lowest precedence, right-associative</li>
-</ul>
-<p>So, how this seemingly useless operator can be useful ?:</p>
-<ul>
+<li>normal function application (putting a space between two things): high precedence, left-associative (i.e. <code>f a b c</code> is <code>(((f a) b) c)</code>)</li>
+<li><code>$</code> function: lowest precedence, right-associative
+So, how this seemingly useless operator can be useful ?:</li>
 <li>we don't have to write so many parentheses !<ul>
 <li><code>sum (map sqrt [1..130])</code> ⟺ <code>sum $ map sqrt [1..130]</code></li>
 <li><code>sqrt (3 + 4 + 9)</code> ⟺ <code>sqrt $ 3 + 4 + 9</code></li>
@@ -15144,7 +15177,7 @@ font-weight: bold;
 <div class="prompt input_prompt">In&nbsp;[30]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-Haskell"><pre><span></span><span class="nf">map</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">negate</span> <span class="p">(</span><span class="n">abs</span> <span class="n">x</span><span class="p">))</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">19</span><span class="p">,</span><span class="mi">24</span><span class="p">]</span>
+<div class=" highlight hl-Haskell"><pre><span></span><span class="nf">map</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">negate</span> <span class="p">(</span><span class="n">abs</span> <span class="n">x</span><span class="p">))</span>
 <span class="nf">map</span> <span class="p">(</span><span class="n">negate</span> <span class="o">.</span> <span class="n">abs</span><span class="p">)</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">19</span><span class="p">,</span><span class="mi">24</span><span class="p">]</span>
 </pre></div>
 
@@ -15161,25 +15194,13 @@ font-weight: bold;
     <div class="prompt"></div>
 
 
-
-
-<div class="output_text output_subarea ">
-<pre>[-5,-3,-6,-7,-3,-2,-19,-24]</pre>
+<div class="output_subarea output_text output_error">
+<pre>
+&lt;interactive&gt;:1:1: error:
+    • No instance for (Show ([Integer] -&gt; [Integer])) arising from a use of ‘print’
+        (maybe you haven&#39;t applied a function to enough arguments?)
+    • In a stmt of an interactive GHCi command: print it</pre>
 </div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>[-5,-3,-6,-7,-3,-2,-19,-24]</pre>
-</div>
-
 </div>
 
 </div>
@@ -15244,15 +15265,20 @@ font-weight: bold;
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>When functions take several parameters: we usually have to partially apply them just so much that each function takes just one parameter</p>
+<p>When functions take several parameters:</p>
 <ul>
-<li>the expressions below are all equivalent:<ul>
+<li>we usually have to partially apply them just so much that each function takes just one parameter</li>
+<li>so the expressions below are all equivalent:<ul>
 <li><code>sum (replicate 5 (max 6.7 8.9))</code></li>
 <li><code>(sum . replicate 5 . max 6.7) 8.9</code></li>
 <li><code>sum . replicate 5 . max 6.7 $ 8.9</code></li>
 </ul>
 </li>
 </ul>
+<blockquote><p>If you want to rewrite an expression with a lot of parentheses by using function composition,
+you can start by putting the last parameter of the innermost function after a <code>$</code> and then just composing all the other function calls,
+writing them without their last parameter and putting dots between them.</p>
+</blockquote>
 
 </div>
 </div>
